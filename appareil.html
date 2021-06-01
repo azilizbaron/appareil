@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+	<title>Domotique</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row" id="app">
+			<div class="col-xs-4" >
+
+				<h2>Les Appareils</h2>
+				<ul class="list-group" v-for="(appareil,index) in tableau">
+					<li class="list-group-item " v-bind:class="{ 'list-group-item-success': getAllume(index), 'list-group-item-danger': getEteint(index)}">
+						<h4> {{ appareil.name }} -- {{ appareil.status }} </h4>
+						<button @click="allumer(index)" class="btn btn-success"> ON</button>
+						<button  @click="eteindre(index)" class="ml-2 btn btn-danger"> OFF</button> 
+					</li>
+				</ul> 
+				<br>
+				<button @click="allumerAll()" class="btn btn-success">ALL ON</button>
+
+				<button  @click="eteintAll()" class="ml-2 btn btn-danger">ALL OFF</button>
+			</div>
+			<div class="col-xs-4">
+				<input type="text"class="form-control" placeholder="Nom appareil" v-model="name">
+				<button type="button" @click="addAppareil()" class="btn btn-primary">Ajouter</button>			
+			</div>
+		</div>
+	</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script>
+        const app = new Vue(
+        {
+            el:'#app',
+			
+			data :{
+                etat: '',
+				name: '',
+				tableau :
+				[
+				]
+            },
+			
+            methods:
+		    {
+                allumerAll(){
+                    for(appareil of this.tableau){
+						appareil.status = "allumé";
+					}
+                },
+				eteintAll(){
+                    for(appareil of this.tableau){
+						appareil.status = "éteint";
+					}
+                },
+				allumer(i){
+					this.tableau[i].status = 'allumé';
+				},
+				eteindre(i){
+					this.tableau[i].status = 'éteint';
+				},
+				getAllume(index){
+					if (this.tableau[index].status == 'allumé'){
+						return true;
+					}else{
+						return false;
+					}
+				},
+				getEteint(index){
+					if (this.tableau[index].status == 'éteint'){
+						return true;
+					}else{
+						return false;
+					}
+				},
+				addAppareil(){
+					let newApp = {};
+					newApp['name'] = this.name;
+					newApp['status'] ='allumé';
+					this.tableau.push(newApp);
+					localStorage.tableau = JSON.stringify(this.tableau);
+				}
+            },
+			mounted() {
+				if (localStorage.tableau) {
+				  this.tableau = JSON.parse(localStorage.tableau);
+				  
+				}
+			  },
+		}
+		);
+	</script>
+</body>
+</html>
